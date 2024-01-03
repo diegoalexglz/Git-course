@@ -1,0 +1,333 @@
+*** SETTING.JSON DE VSCODE
+* C:\Users\Diego\AppData\Roaming\Code\User
+
+*** .bash_profile, .bashrc, 
+* C:\Users\Diego
+# .bash_profile: Se ejecuta una vez cada inicio de sesión (usuario)
+# .bashrc: Se ejecuta cada vez que se abre una terminal (git bash) 
+
+*** .inputrc:
+# User config for tab completion (if exists, this will be used instead of /etc/inputrc)
+* C:\Users\Diego
+
+*** ect\inputrc:
+# Global config for tab completion
+* D:\MyPrograms\Engineering\Git\etc\inputrc
+
+# Cuando no hayan archivos sin rastrear (untracked) ni archivos modificados (modified) sin guardar, el directorio estará limpio (verde):
+'''
+On branch main
+nothing to commit, working tree clean
+'''
+
+# -------------- Abrir Git bash desde el explorador de archivos -------------- #
+cmd
+"D:\MyPrograms\Engineering\Git\bin\bash.exe"
+
+
+
+# ---------------------- Comandos básicos en la terminal --------------------- #
+ctrl + l            # limpiar la terminal
+ls                  # listado de directorios
+cd (+ tab)			# desplazarse por los directorios (tab repetido = cambiar sugerencia; escribir + tab = autocompletar)
+cd ..				# subir una carpeta (subir al directorio anterior)
+pwd                 # saber en qué ruta estoy
+mkdir "nombre"      # crear una carpeta
+code .              # abrir vscode
+touch "nombre.py"   # crear un archivo
+
+*** Nota
+* Git bash es una terminal de Linux, por lo que los comandos son los mismos que en Linux, mientras que Git CMD es
+* una terminal de Windows, por lo que no acepta comandos como touch, que se reemplaza por:
+echo $null > hellogit.py
+
+# ------------------------------- Configuración ------------------------------ #
+* Requerimientos básicos para configurar Git
+* Nombre de usuario
+* Email
+
+# Pasos:
+git config --global user.name "Alex"                                    # Se creará un archivo .gitconfig en C:\Users\Diego
+git config --global user.email "gonzalez.diego.igm@gmail.com"           
+
+
+
+# ----------------------- (Crear un repositorio de Git) ---------------------- #
+*** Nota
+* Crear un repositorio es igual a hacer que Git comience a funcionar en un
+* directorio, es decir, que el directorio tenga un control de versiones.
+
+# Pasos:
+* Ubicarse en el directorio que se quiere convertir en un repositorio de Git
+git init                                                                # Se creará un archivo .git en el directorio
+                                                                        # Se nos mostrará que estamos en la rama master
+
+
+
+# --------------------- Flujo básico: git add, git commit -------------------- #
+# 1. Añadir cambios (git add), 2. Confirmar cambios (git commit)
+# A la combinación de estos dos pasos se le puede llamar 'versionar un archivo/fichero'
+git status
+# Muestra el estado de los archivos del directorio. Si el archivo está en rojo, significa que no está siendo controlado por Git (untracked)
+# Si hay modificaciones que no han sido guardadas, aparecerá en rojo (modified:   hellogit.py)
+git add hellogit.py
+# Agrega el archivo hellogit.py del directorio (local area) al área de preparación (staging area)
+git commit -m "Mi primer commit"
+# Crea un commit (una primera fotografía) con los archivos que estén en el área de preparación (staging area) 
+
+*** Nota
+git add .   # (con punto) agrega todos los archivos del directorio pendientes (local area) al área de preparación (staging area)
+
+
+
+# --------- Ver y revertir commits: git log, git checkout, git reset --------- #
+git log
+# Muestra los commits que se han hecho, con su hash, autor, fecha y mensaje
+
+*** Nota
+git log --graph
+git log --graph --pretty=oneline
+git log --graph --decorate --all --oneline
+# Son variaciones de git log que muestran los commits en forma de árbol 
+
+git checkout 3a5a428
+# Selecciona la rama o versión del código en la que se desea trabajar (es decir, mueve el puntero HEAD a un registro determinado).
+git reset
+# Revierte los cambios que se hayan hecho en el archivo hellogit.py y lo saca del área de preparación (staging area), sirve para deshacer cambios que se hayan guardado con git commit (local area)
+
+
+# ---------------------- Crear abreviaciones: git alias ---------------------- #
+git config --global alias.lg "log --graph --decorate --all --oneline"
+# Crea un alias para el comando git log, de modo que se pueda usar git lg en vez de git log --graph --decorate --all --oneline
+# El alias se guarda en el archivo .gitconfig
+
+# -------------------------------- git ignore -------------------------------- #
+touch .gitignore
+# Crea un archivo .gitignore en el directorio. Los ficheros, rutas o expresiones que se escriban en este archivo serán ignorados por Git
+# Ejemplo: **/Apuntes.txt (ignora el archivo Apuntes.txt en cualquier directorio)
+git add .gitignore
+git commit -m "Se agrega el .gitignore"
+# También es necesario agregar el .gitignore y hacer un commit para que Git lo tenga en cuenta
+
+
+
+# -------------------------- git diff para ficheros -------------------------- #
+git diff
+# Muestra las diferencias entre el archivo actual (a) y el último commit (b).
+# Sirve para ver qué cambios se han hecho, cuando no se está seguro de querer hacer un commit 
+# Ejemplo: diff --git a/hellogit.py b/hellogit.py       -print("New Hello git")      +print("New Hello git with changes")
+
+
+
+# ------ Desplazamiento entre commits (estados o registros) de una rama ------ #
+git checkout 3a5a428
+# Desplaza el directorio al commit con el hash indicado
+# Al usar git lg, aparecerá (main) en el último commit hecho y (HEAD) en el commit al que nos hemos desplazado 
+git checkout main
+# Desplaza el directorio al último commit hecho (main)
+
+
+
+# -------------------------- git reset hard y reflog ------------------------- #
+# reflog = reference log = historial de referencias
+git reset --hard 3a5a428
+# Elimina todos los commits que se hayan hecho después del commit con el hash indicado (hacia adelante)
+git reflog
+# Muestra todos los commits que se han hecho, incluso los que se hayan eliminado con git reset --hard
+# Sirve para recuperar commits que se hayan eliminado por error. Es más un HISTORIAL DE INTERACCIONES con Git.
+# Por ejemplo, se podría volver al último commit (que se supondría estaba eliminado):
+git checkout 9d27b93
+# en este caso, HEAD se movería a 9d27b93, pero MAIN seguiría en el commit 3a5a428, que es el último que conservó el reset --hard.
+# para evitar este desfase entre HEAD y MAIN (detached HEAD), se debe mover el puntero (HEAD) a MAIN
+git checkout main
+# Y luego, un git reset --hard al commit que se quiere recuperar:
+git reset --hard 9d27b93
+# Y debe aparecer nuevamente 'main' con color verde. Así pues, el git reset --hard funciona tanto hacia atrás como hacia adelante.
+
+
+
+# ---------------------------------- git tag --------------------------------- #
+#Sirve para etiquetar los commits o registros importantes, por ejemplo, las versiones estables de una aplicación.
+git tag clase_1
+# Crea una etiqueta llamada clase_1 en el último commit hecho (main)
+git tag
+# Muestra el listado de etiquetas
+git checkout tags/clase_1
+# Desplaza el directorio al commit con la etiqueta clase_1
+
+
+
+# ----------- Crear y desplazarse entre ramas: git branch y switch ----------- #
+# Una rama es útil para trabajar en paralelo con el código, sin afectar la rama principal (main)
+# por ejemplo, para hacer experimentos o desarrollar una funcionalidad nueva mientras la rama principal evoluciona.
+git branch experimental
+# Crea una rama llamada 'experimental'
+git switch experimental
+# Se desplaza a la rama 'experimental'
+*** Nota
+* El git checkout también sirve para desplazarse entre ramas, pero se recomienda usar git switch
+git branch
+# Muestra el listado de ramas
+
+
+
+# ------------------------- fusionar ramas: git merge ------------------------ #
+git merge main
+# (Estando en 'experimental'). Fusiona la rama 'main' con la rama actual (experimental)
+
+
+
+# -------------------------------- conflictos -------------------------------- #
+# Aparecen cuando se intenta fusionar dos ramas que tienen cambios en las mismas líneas de código.
+# La terminal indicará que hay conflictos y en qué archivos están.
+# Los conflictos deben resolverse manualmente, editando el archivo que tiene el conflicto,
+# y luego, hacer un commit para confirmar los cambios:
+git add .
+git commit -m "Se resuelven los conflictos"
+*** Notas:
+* A. Nótese que para solucionar el conflicto, se debe hacer un commit, aunque no se haya hecho ningún cambio en el código.
+* B. Nótese que el fichero del conflicto se modificó, pero no se modificó ni en el último registro de 'main'
+*    ni en el último registro de 'experimental', sino en el registro de la fusión de ambas ramas.
+
+
+
+# ---------- guardado temporal de cambios: git stash y git stash pop --------- #
+git stash
+# Sirve para guardar temporalmente los cambios que se hayan hecho en el directorio, sin hacer un commit.
+# A veces, se quiere cambiar de rama, pero no se han guardado los cambios de los ficheros, por lo que,
+# al hacer git switch, salta el mensaje "error: Your local changes to the following files would be overwritten
+# by checkout: experimental.py Please commit your changes or stash them before you switch branches. Aborting"
+# Usualmente, esto ocurre cuando los cambios que se han hecho están a medias y el código no funciona,
+# ya que sólo se suele hacer un commit cuando el código funciona.
+git stash list
+# Muestra el listado de cambios que se han guardado temporalmente.
+# Ahora ya se puede cambiar de rama sin problemas con:
+git switch main
+# ...
+git stash pop
+# Recupera los cambios que se hayan guardado temporalmente con git stash
+# Ahora sí se termina el código de manera que funcione y se hace un commit.
+git add .
+git commit -m "El código es funcional"
+# Por otro lado...
+git stash drop
+# Elimina el git stash guardado, en caso de que no se quiera recuperar.
+
+
+
+# ----------------------- Reintegración de ramas a MAIN ---------------------- #
+# git diff para ramas:
+git diff main experimental
+ó
+git diff experimental               # (estando en main)
+# Muestra las diferencias entre la rama 'main' y la rama 'experimental'
+# Por ejemplo: --- a/experimental.py @@ -1 +0,0 @@ -print("Experimental V4 funcional")
+# significa que la rama 'experimental' tiene un fichero con una línea de código que no está en la rama 'main'.
+git merge experimental
+# Con esto, se fusiona la rama 'experimental' con la rama 'main'.
+
+
+# ------------------------------ Eliminar ramas ------------------------------ #
+# Las ramas suelen eliminarse cuando ya se han fusionado con MAIN, porque su funcionalidad ya está lista.
+git branch -d experimental
+# Elimina la rama 'experimental'. Si la rama no se ha fusionado con 'main', se debe usar -D en vez de -d.
+# Si se intenta eliminar una rama que no se ha fusionado con 'main', aparecerá el mensaje:
+# error: The branch 'experimental' is not fully merged. If you are sure you want to delete it, run 'git branch -D experimental'.
+*** Nota
+* Usando git reflog y git checkout hacia algún hash, se pueden recuperar registros/commits de la rama eliminada,
+* porque estos no se eliminan, sin embargo, lo que sí se elimina es la rama, por lo que no se puede desplazar,
+* ni fusionar, ni hacer nada con ella. Su flujo ya no se puede seguir.
+
+
+# ------------------------ Github y autenticación SSH ------------------------ #
+# SSH = Secure Shell = Protocolo de red que permite el acceso remoto a un servidor
+
+# 1. Chequear si ya se tienen claves existentes ---------------------------------------------------
+# Ir a la ruta: 
+* C:\Users\Diego\.ssh
+
+# 2. Generar nueva clave SSH ----------------------------------------------------------------------
+# Para crear una clave SSH desde cero, desde Git Bash y en la carpeta .ssh, se debe usar el comando:
+ssh-keygen -t ed25519 -C "gonzalez.diego.igm@gmail.com"
+# Se nos pedirá un nombre para la clave, por ejemplo: id_rsa (tanto RSA como ED25519 son algoritmos de cifrado)
+# Se nos pedirá una contraseña para la clave (passphrase), se usa cada que se hace un push a Github.
+# Para esta vez, se usó:
+alex
+# Se creará un archivo id_rsa.pub, que es la clave pública, y un archivo id_rsa, que es la clave privada.
+# La clave pública (.pub) es la que se debe agregar a Github, para que Github pueda autenticar al usuario.
+
+*** -Documentación de github- Modificar el archivo .bashrc para que se ejecute ssh-agent cada vez que se abra Git Bash automáticamente.
+
+ssh-add /c/Users/Diego/.ssh/id_rsa
+# Agrega la clave privada al ssh-agent
+
+# 3. Añadir clave SSH a la cuenta ------------------------------------------------------------------
+# En el navegador, ir a la cuenta de Github, Settings, SSH and GPG keys, New SSH key.
+# En el campo 'Title', poner un nombre para la clave, por ejemplo: 'Mi clave SSH'
+# En el campo 'Key', copiar el contenido del archivo id_rsa.pub
+
+# 4. Probar conexión SSH ----------------------------------------------------------------------------
+ssh -T git@github.com
+# Si todo está bien, escribimos 'yes' y aparecerá Hi diegoalexglz! You've successfully authenticated, but GitHub does not provide shell access.
+
+
+
+# ----- Asociar un repositorio local con un repositorio remoto de github ----- #
+# Abrir Git Bash en el directorio del proyecto (main).
+# Teniendo un repositorio de github creado, llamado 1st_repo,
+git remote add origin https://github.com/diegoalexglz/1st_repo.git
+# Enlaza el repositorio local con el repositorio remoto de github
+git push -u origin main
+# Sube el contenido del repositorio local al repositorio remoto de github
+
+
+
+# ------------- Actualizar el repositorio local: git fetch y pull ------------ #
+# Suponiendo que se crea y se le hace commit a un readme.md en github y que, además, se modifica y se hace un commit al archivo hellogit.py en local.
+# En este caso, (main) aparece en morado, porque el repositorio local está desactualizado con respecto al remoto, y un git push no funcionará.
+git fetch
+# Trae los cambios del repositorio remoto al repositorio local, pero no los aplica (es decir, descarga el historial de cambios, pero no los fusiona con el código local)
+# Con git log o git lg, se pueden ver los commits hechos en remoto que no están en local. (main) aparece en amarillo.
+git pull origin main
+# Trae los cambios del repositorio remoto al repositorio local y los fusiona con el código local. (main) aparece en morado.
+
+
+
+# ---------------- Actualizar el repositorio remoto: git push ---------------- #
+git push
+# Sube los cambios del repositorio local al repositorio remoto de github. (main)vuelve a aparecer en verde.# ----------------------- clonar un repositorio remoto ----------------------- #
+# Suponiendo que se tiene un repositorio remoto en github, llamado 1st_repo, y que se quiere clonar en local, porque somos un nuevo colaborador.
+# Creamos un directorio en local, por ejemplo, llamado 1st_local, y abrimos Git Bash en él.
+# En github, copiamos la URL (SSH) del repositorio remoto, que es: git@github.com:diegoalexglz/1st_repo.git
+# En Git Bash, escribimos:
+git clone git@github.com:diegoalexglz/1st_repo.git
+# Se descargarán todos los archivos del repositorio remoto en el directorio 1st_local,
+# incluyendo el .git, por lo que ya no es necesario hacer git init.
+
+
+
+# -------------- bifurcaciones = copia de repositorios: git fork ------------- #
+# Suponiendo que se clonó un repositorio remoto de mouredev, del que no se tiene permisos de escritura,
+# se hicieron cambios en local, se le hizo un commit y se intentó hacer un git push, pero apareció el mensaje de no tener permisos de escritura.
+* En estos casos, cuando se quiere contribuir a un proyecto, pero no se tienen permisos de escritura, se debe hacer un:
+* fork.
+* Un fork es una copia del repositorio de mouredev, pero en la cuenta de github del usuario, que sí se puede modificar.
+# En github, en el repositorio de mouredev, se hace click en 'fork', y se selecciona la cuenta de github del usuario.
+# Se creará una copia en la cuenta del usuario, llamada 'mouredev-fork'
+# Escribimos en Git Bash, entonces, para descargar el repo: git clonegit@github.com:diegoalexglz/mouredev-fork.git
+
+
+
+# --------- Contribuir a un proyecto desde un fork: git pull request --------- #
+# Suponiendo que se hizo un fork de un repositorio de mouredev, y que se modificó (main en amarillo) y se le hizo un commit a un archivo en local (main en morado)
+# luego, subimos los cambios a nuestra cuenta con git push (main en verde), y ahora queremos contribuir al proyecto original, es decir, al repositorio de mouredev.
+# En github, en diegoalexglz/mouredev-fork, hacemos clic en:
+* sync fork
+# para sincronizar con el repositorio original. Y luego en:
+* Contribute -> Open pull request (PR)
+# escribimos un título y una descripción para el PR, y hacemos clic en:
+* Create pull request
+# Entonces, el dueño original podrá revisar los cambios y aceptarlos o rechazarlos.
+# Si los acepta, entonces aparecerán la opciones:
+* Merge pull request
+* Confirm merge
